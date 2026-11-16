@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d12">
+<title>Animated Login UI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+:root{--bg:#10191d;--blue:#042354;--neon:#00ff19;--muted:#b7c4d6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);font-family:Poppins,Arial,sans-serif;color:#fff}
+.page-title{position:absolute;top:35px;left:0;width:100%;text-align:center;font-size:clamp(23px,4vw,34px);font-weight:600;color:#83b7ff;text-shadow:0 0 12px #247cff80}
+.square{position:relative;width:min(500px,88vw);height:min(500px,88vw);display:flex;justify-content:center;align-items:center}
+.square i{position:absolute;inset:0;border:1px solid #fff;transition:.5s}
+.square i:nth-child(1){border-radius:38% 62% 63% 37% / 41% 44% 56% 59%;animation:animate 6s linear infinite;background-color:rgb(4,35,84);box-shadow:0 0 30px #00ff1966,inset 0 0 24px #00ff191c;border-color:#00ff19}
+.square i:nth-child(2){border-radius:41% 59% 38% 62% / 58% 36% 64% 42%;animation:animate 4s linear infinite reverse;border-color:#00ff19;filter:drop-shadow(0 0 12px #00ff19)}
+.square i:nth-child(3){border-radius:58% 42% 55% 45% / 43% 59% 41% 57%;animation:animate 10s linear infinite;border-color:#00ff1977}
+.square:hover i{border:5px solid var(--clr);filter:drop-shadow(0 0 20px var(--clr))}
+@keyframes animate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.login{position:relative;width:66%;max-width:330px;padding:28px 0;text-align:center;z-index:2}
+.login h2{font-size:22px;font-weight:600;margin:0 0 28px;letter-spacing:.3px}
+.inputBox{position:relative;width:100%;margin:0 auto 15px}
+.inputBox input{width:100%;height:44px;padding:0 16px;border:1px solid #d9e4f5;border-radius:28px;outline:none;background:transparent;color:#fff;font:400 13px Poppins,sans-serif;transition:.3s}
+.inputBox input:focus{border-color:#00cfff;box-shadow:0 0 9px #00cfff88}
+.inputBox label{position:absolute;top:-8px;left:17px;padding:0 5px;background:#042354;color:#00d9ff;font-size:9px;letter-spacing:.4px;opacity:0;transition:.2s;pointer-events:none}
+.inputBox input:focus+label,.inputBox input:not(:placeholder-shown)+label{opacity:1}
+.inputBox input::placeholder{color:#b9c8dc;font-size:11px}
+.password-box input{padding-right:48px}
+.show-password{position:absolute;right:13px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#dce8f7;font:500 10px Poppins;cursor:pointer;padding:5px}
+.actions{display:flex;justify-content:space-between;align-items:center;margin:1px 4px 18px;font-size:9px;color:#d5dfed}
+.actions a,.signup a{color:#dce8f7;text-decoration:none}
+.actions a:hover,.signup a:hover{color:#00eaff;text-decoration:underline}
+.signin{width:100%;height:44px;border:0;border-radius:28px;background:linear-gradient(100deg,#ff2873 0%,#ff8b42 53%,#ffe45e 100%);color:#111;font:700 13px Poppins;cursor:pointer;box-shadow:0 5px 18px #ff4f8060;transition:transform .2s,box-shadow .2s}
+.signin:hover{transform:translateY(-2px);box-shadow:0 8px 24px #ff4f8090}
+.signin:active{transform:translateY(0)}
+.signup{display:flex;justify-content:space-between;margin:12px 4px 0;font-size:9px;color:#d5dfed}
+.status{min-height:18px;margin:12px 0 0;font-size:10px;color:#ffb4c7}
+.status.success{color:#75ff9a}
+@media(max-width:480px){.page-title{top:22px}.login{width:70%}.login h2{font-size:20px;margin-bottom:23px}.inputBox input{height:41px}.signin{height:41px}.square{width:88vw;height:88vw}}
+@media(prefers-reduced-motion:reduce){.square i{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<h1 class="page-title">Animated Login UI</h1>
+<main class="square" aria-label="Animated login form">
+<i style="--clr:#00ff19"></i><i style="--clr:#00ff19"></i><i style="--clr:#00ff19"></i>
+<section class="login">
+<h2>Login</h2>
+<form id="loginForm">
+<div class="inputBox">
+<input id="username" name="username" type="text" placeholder="Username" autocomplete="username" required>
+<label for="username">Username</label>
+</div>
+<div class="inputBox password-box">
+<input id="password" name="password" type="password" placeholder="Password" autocomplete="current-password" required minlength="4">
+<label for="password">Password</label>
+<button type="button" class="show-password" id="togglePassword" aria-label="Show password">Show</button>
+</div>
+<div class="actions">
+<a href="#" id="forgotLink">Forgot Password?</a>
+<a href="#" id="signupLink">Signup</a>
+</div>
+<button class="signin" type="submit">Sign in</button>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+</form>
+</section>
+</main>
+<script>
+(() => {
+ const form=document.getElementById('loginForm');
+ const password=document.getElementById('password');
+ const toggle=document.getElementById('togglePassword');
+ const status=document.getElementById('status');
+ toggle.addEventListener('click',()=>{
+   const reveal=password.type==='password';
+   password.type=reveal?'text':'password';
+   toggle.textContent=reveal?'Hide':'Show';
+   toggle.setAttribute('aria-label',reveal?'Hide password':'Show password');
+   password.focus();
+ });
+ form.addEventListener('submit',event=>{
+   event.preventDefault();
+   if(!form.reportValidity()) return;
+   status.textContent='Demo sign-in submitted successfully.';
+   status.className='status success';
+ });
+ document.getElementById('forgotLink').addEventListener('click',event=>{
+   event.preventDefault();
+   status.textContent='Password recovery is a demo feature. Connect your reset flow here.';
+   status.className='status';
+ });
+ document.getElementById('signupLink').addEventListener('click',event=>{
+   event.preventDefault();
+   status.textContent='Signup flow is not connected in this demo.';
+   status.className='status';
+ });
+})();
+</script>
+</body>
+</html>
